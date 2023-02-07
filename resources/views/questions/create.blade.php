@@ -33,6 +33,11 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Selection {{$i}}:</strong>
+                    <label>
+                        <input type="radio" name="answer_select" id="answer_select" value="{{$i}}"
+                               onchange="selectAnswer()"/>
+                        Answer
+                    </label>
                     <input placeholder="Selection {{$i}}" class="form-control" name="selection{{$i}}"
                            id="selection{{$i}}" type="text">
                 </div>
@@ -41,7 +46,7 @@
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>Answer:</strong>
-                {!! Form::text('answer', null, array('placeholder' => 'Answer','class' => 'form-control')) !!}
+                {!! Form::text('answer', null, array('id'=>'answer', 'placeholder' => 'Answer', 'class' => 'form-control', 'readonly')) !!}
             </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 text-center">
@@ -51,5 +56,16 @@
     {!! Form::close() !!}
 @endsection
 @section('scripts')
-
+    <script>
+        function selectAnswer() {
+            var answer_selection = document.querySelector('input[name="answer_select"]:checked').value;
+            var answer_field = document.getElementById('answer');
+            var answer_text = document.getElementById('selection' + answer_selection).value;
+            if (answer_text) {
+                answer_field.value = answer_text;
+            } else {
+                document.querySelector('input[name="answer_select"]:checked').checked = false;
+            }
+        }
+    </script>
 @endsection

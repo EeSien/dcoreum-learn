@@ -38,10 +38,12 @@
                             </li>
                         @endif
                     @else
+                        @role('Admin')
                         <li><a class="nav-link" href="{{ route('users.index') }}">Manage Users</a></li>
                         <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Roles</a></li>
                         <li><a class="nav-link" href="{{ route('permissions.index') }}">Manage Permissions</a></li>
                         <li><a class="nav-link" href="{{ route('questions.index') }}">Manage Questions</a></li>
+                        @endrole
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                 {{ Auth::user()->name }}
