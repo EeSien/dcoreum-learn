@@ -23,31 +23,60 @@
     {!! Form::model($question, ['method' => 'PATCH','route' => ['questions.update', $question->id]]) !!}
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Questions :</strong>
-                {!! Form::text('question', null, array('placeholder' => 'Question','class' => 'form-control')) !!}
-            </div>
+            @foreach($languages as $key=>$language)
+                <div class="form-group">
+                    <strong>Question {{$language}}: {{ $question->question->$key}} {{ old('question_'.$key)}}</strong>
+                    <input id="question_{{$key}}" placeholder="Question {{$language}}" class="form-control"
+                           name="question_{{$key}}" type="text"
+                           value="{{( old('question_'.$key) ? old('question_'.$key) : $question->question->$key)}}">
+                </div>
+            @endforeach
         </div>
-        @for($i = 1; $i < 5; $i++)
+        @php
+            $j =0;
+            $number = 1;
+        @endphp
+        @foreach($question->selection as $key=>$selection)
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
-                    <strong>Selection {{$i}}:</strong>
-                    <label>
-                        <input type="radio" name="answer_select" id="answer_select" value="{{$i}}"
-                               onchange="selectAnswer()" {{$question->selection[$i-1] == $question->answer ? 'checked' : ''}}/>
-                        Answer
-                    </label>
-                    <input placeholder="Selection {{$i}}" class="form-control" name="selection{{$i}}"
-                           id="selection{{$i}}" type="text" value="{{$question->selection[$i-1]}}">
+                    <strong>Selection {{$number}} {{ str_contains($key, 'cn') ? 'Chinese' : 'English' }}:</strong>
+                    @if($j%2==0)
+                        <label>
+                            <input type="radio" name="answer_select" id="answer_select" value="{{$number}}"
+                                   onchange="selectAnswer()"
+                            @if(old('answer_select'))
+                                {{old('answer_select') == $number ? 'checked' :''}}
+                                @else
+                                {{($question->answer->cn == $selection) ? 'checked' : ''}}
+                                @endif
+                                />
+                            Answer
+                        </label>
+                    @endif
+                    <input
+                        placeholder="Selection {{$number. ' '}}{{str_contains($key, 'cn') ? 'Chinese' : 'English' }} "
+                        class="form-control"
+                        name="selection{{$number. '_'}}{{str_contains($key, 'cn') ? 'cn' : 'en' }}"
+                        id="selection{{$number. '_'}}{{str_contains($key, 'cn') ? 'cn' : 'en' }}"
+                        type="text"
+                        value="{{old('selection'.$number.'_'. str_contains($key, 'cn') ? 'cn' : 'en' ) ? old('selection'.$number.'_'. str_contains($key, 'cn') ? 'cn' : 'en' ) :$question->selection->$key}}">
                 </div>
             </div>
-        @endfor
+            @php($j++)
+            @if($j%2==0)
+                @php($number ++)
+            @endif
+        @endforeach
 
         <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Answer:</strong>
-                {!! Form::text('answer', null, array('id'=>'answer', 'placeholder' => 'Answer', 'class' => 'form-control', 'readonly')) !!}
-            </div>
+            @foreach($languages as $key=>$language)
+                <div class="form-group">
+                    <strong>Answer {{$language}} :</strong>
+                    <input id="answer_{{$key}}" placeholder="Answer" class="form-control" readonly=""
+                           name="answer_{{$key}}" type="text"
+                           value="{{(old('answer_'.$key) ? old('answer_'.$key) : $question->answer->$key)}}">
+                </div>
+            @endforeach
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 text-center">
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -59,13 +88,22 @@
     <script>
         function selectAnswer() {
             var answer_selection = document.querySelector('input[name="answer_select"]:checked').value;
-            var answer_field = document.getElementById('answer');
-            var answer_text = document.getElementById('selection' + answer_selection).value;
-            if (answer_text) {
-                answer_field.value = answer_text;
+            console.log('selection' + answer_selection + '_cn');
+                @foreach($languages as $key=>$language)
+
+            var answer_field_{{$key}} = document.getElementById('answer_{{$key}}');
+            var answer_text_{{$key}} = document.getElementById('selection' + answer_selection + '_{{$key}}').value;
+
+            if (answer_text_{{$key}}.trim() !== '') {
+                answer_field_{{$key}}.value = answer_text_{{$key}};
             } else {
-                document.querySelector('input[name="answer_select"]:checked').checked = false;
+                alert('The answer for {{$language}} cannot be null!');
+                if (document.querySelector('input[name="answer_select"]:checked')) {
+                    document.querySelector('input[name="answer_select"]:checked').checked = false;
+                }
             }
+
+            @endforeach
         }
     </script>
 @endsection
