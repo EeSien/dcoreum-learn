@@ -60,7 +60,7 @@ class LoginController extends Controller
             return redirect()->route('home');
         }
 
-        return redirect("login")->withError('Oppes! You have entered invalid credentials');
+        return redirect("login")->with('error', 'Oppes! You have entered invalid credentials');
     }
 
     public function logout(Request $request)
