@@ -38,6 +38,8 @@
                             </li>
                         @endif
                     @else
+                        <li><a class="nav-link" href="{{ route('daily-question') }}">Daily Question</a></li>
+
                         @role('Admin')
                         <li><a class="nav-link" href="{{ route('users.index') }}">Manage Users</a></li>
                         <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Roles</a></li>
